@@ -680,7 +680,50 @@ span.pixel-buff-slot{background:#1b2a22;border:1px solid #4e7a5c;border-radius:3
 .pixel-result:not(.pixel-special) .result-gear strong{font-size:12px}
 .pixel-result:not(.pixel-special) .pixel-help{font-size:12px;line-height:1.6}
 
-</style></head>
+</style>
+<!-- injected by tools/deploy-web-demo.mjs (2026-10-19) - source pixel-preview/index.html is NOT modified -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="한 판 3분. 고양이 4마리, 스테이지 20개. 설치도 가입도 없이 링크만 누르면 브라우저에서 바로 플레이됩니다. 모바일은 터치, PC는 키보드·마우스.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://noble00305.github.io/nyan-survivors/">
+<meta property="og:site_name" content="냥서바이버">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="냥서바이버 — 설치 없이 브라우저로 바로 하는 고양이 뱀서라이크">
+<meta property="og:description" content="한 판 3분. 고양이 4마리, 스테이지 20개. 설치도 가입도 없이 링크만 누르면 브라우저에서 바로 플레이됩니다. 모바일은 터치, PC는 키보드·마우스.">
+<meta property="og:image" content="https://noble00305.github.io/nyan-survivors/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="냥서바이버 전투 화면 - 고양이가 몰려오는 적 사이를 달린다">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="냥서바이버 — 설치 없이 브라우저로 바로 하는 고양이 뱀서라이크">
+<meta name="twitter:description" content="한 판 3분. 고양이 4마리, 스테이지 20개. 설치도 가입도 없이 링크만 누르면 브라우저에서 바로 플레이됩니다. 모바일은 터치, PC는 키보드·마우스.">
+<meta name="twitter:image" content="https://noble00305.github.io/nyan-survivors/og.png">
+<script>
+/* nyan-survivors web demo counter (2026-10-19) - abacus.jasoncameron.dev, no cookies, no PII */
+(function(){try{
+  var BASE="https://abacus.jasoncameron.dev/hit/nyansurv-2026a/";
+  var sent={visit:0,play:0,play2:0};
+  try{window.__nyanCount=sent;}catch(e){}
+  function bump(k){try{
+    sent[k]=(sent[k]||0)+1;
+    var u=BASE+k+'?t='+Date.now();
+    if(typeof fetch==='function'){
+      fetch(u,{mode:'cors',cache:'no-store',keepalive:true})['catch'](function(){try{(new Image()).src=u;}catch(e){}});
+    }else{try{(new Image()).src=u;}catch(e){}}
+  }catch(e){}}
+  bump('visit');
+  var seen=0;
+  var timer=setInterval(function(){try{
+    var n=-1;
+    try{n=(typeof pixelTelemetry!=='undefined'&&pixelTelemetry)?pixelTelemetry.run:-1;}catch(e){n=-1;}
+    if(typeof n!=='number'||!(n>seen))return;
+    if(n-seen>20){seen=n;return;}
+    while(seen<n){seen++;bump(seen===1?'play':'play2');}
+  }catch(e){}},1000);
+  try{window.addEventListener('pagehide',function(){try{clearInterval(timer);}catch(e){}});}catch(e){}
+}catch(e){}})();
+</script>
+</head>
 <body>
 <canvas id="game"></canvas>
 <div id="ui-overlay">

@@ -707,9 +707,13 @@ span.pixel-buff-slot{background:#1b2a22;border:1px solid #4e7a5c;border-radius:3
   function bump(k){try{
     sent[k]=(sent[k]||0)+1;
     var u=BASE+k+'?t='+Date.now();
-    if(typeof fetch==='function'){
-      fetch(u,{mode:'cors',cache:'no-store',keepalive:true})['catch'](function(){try{(new Image()).src=u;}catch(e){}});
-    }else{try{(new Image()).src=u;}catch(e){}}
+    /* 2026-11-20 retry: abacus answers 500 / times out about half the time -> up to 3 retries (1s,2s,4s) */
+    var tries=0;
+    function go(){tries++;var uu=BASE+k+'?t='+Date.now()+'&r='+tries;
+      fetch(uu,{mode:'cors',cache:'no-store',keepalive:true}).then(function(r){if(!r.ok)throw 0;})['catch'](function(){
+        if(tries<4){setTimeout(go,1000*Math.pow(2,tries-1));}else{try{(new Image()).src=uu;}catch(e){}}
+      });}
+    if(typeof fetch==='function'){go();}else{try{(new Image()).src=u;}catch(e){}}
   }catch(e){}}
   /* 2026-11-20 per-source counters: ?src=[A-Za-z0-9_]{1,24} also counts <key>_<src> */
   var SRC='';try{var m=/[?&]src=([A-Za-z0-9_]{1,24})(?:&|$)/.exec(location.search||'');if(m)SRC=m[1].toLowerCase();}catch(e){}

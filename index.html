@@ -711,6 +711,9 @@ span.pixel-buff-slot{background:#1b2a22;border:1px solid #4e7a5c;border-radius:3
       fetch(u,{mode:'cors',cache:'no-store',keepalive:true})['catch'](function(){try{(new Image()).src=u;}catch(e){}});
     }else{try{(new Image()).src=u;}catch(e){}}
   }catch(e){}}
+  /* 2026-11-20 per-source counters: ?src=[A-Za-z0-9_]{1,24} also counts <key>_<src> */
+  var SRC='';try{var m=/[?&]src=([A-Za-z0-9_]{1,24})(?:&|$)/.exec(location.search||'');if(m)SRC=m[1].toLowerCase();}catch(e){}
+  var bump0=bump;bump=function(k){bump0(k);if(SRC)bump0(k+'_'+SRC);};
   bump('visit');
   var seen=0;
   var timer=setInterval(function(){try{

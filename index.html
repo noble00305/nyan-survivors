@@ -179,6 +179,8 @@ svg{width:24px;height:24px;flex-shrink:0}
 #pixel-path{position:absolute;top:calc(65px + var(--sat));left:16px;display:flex;align-items:center;gap:9px;color:var(--accent);background:#14222aea;padding:9px 10px;border:1px solid #324951;border-left:3px solid var(--accent);min-width:180px}
 #pixel-path svg{width:22px;height:22px}#pixel-path strong{display:block;font-size:11px}#pixel-path small{display:block;color:#94aaae;font-size:9px;margin-top:3px}#pixel-path b{font:10px Consolas,monospace;margin-left:10px}
 #pixel-goal{position:absolute;top:calc(14px + var(--sat));left:50%;transform:translateX(-50%);font:700 16px Consolas,monospace;color:var(--mint);white-space:nowrap;background:#14222adc;border:1px solid #2e4a50;padding:7px 12px}
+/* 2026-11-27 사장님 「덩치 이런애들이 체력 험치 ui를 가려」: 막대 뒤에 바탕이 없어 큰 적·풀이 비치고, 가운데 단계 칸(#pixel-goal)이 체력 막대 오른쪽을 덮었다. 일반판만 — 막대 묶음에 어두운 바탕을 깔고, 오른쪽 끝을 단계 칸 왼쪽(화면 가운데 -65px)에서 멈춘다. 솜이 에디션은 그대로. */
+body:not(.pixel-special-on) #hud{right:calc(50% + 65px);background:#0c171cee;border:1px solid #2e4a50;padding:5px 8px;box-sizing:border-box;margin:-5px 0 0 -8px}
 #pixel-dash{position:absolute;right:20px;bottom:calc(70px + var(--sab));pointer-events:auto;background:#243c3ef2;border:2px solid #a1dec3;box-shadow:0 4px #34594e;color:#dcefdc;width:84px;height:65px;font-weight:700;font-size:11px;border-radius:5px;touch-action:none}
 #levelup-screen{background:#101b25f5;gap:14px;padding:24px 18px;overflow-y:auto;justify-content:safe center;touch-action:pan-y}
 .tree-heading,.tree-map,.tree-cards{width:min(100%,480px);flex-shrink:0}.tree-heading h1{font-size:22px;line-height:1.4;margin-top:7px;letter-spacing:-.7px}
@@ -718,6 +720,7 @@ span.pixel-buff-slot{background:#1b2a22;border:1px solid #4e7a5c;border-radius:3
   /* 2026-11-20 per-source counters: ?src=[A-Za-z0-9_]{1,24} also counts <key>_<src> */
   var SRC='';try{var m=/[?&]src=([A-Za-z0-9_]{1,24})(?:&|$)/.exec(location.search||'');if(m)SRC=m[1].toLowerCase();}catch(e){}
   var bump0=bump;bump=function(k){bump0(k);if(SRC)bump0(k+'_'+SRC);};
+  try{window.__nyanBump=function(k){bump(k);};}catch(e){}
   bump('visit');
   var seen=0;
   var timer=setInterval(function(){try{
@@ -728,6 +731,27 @@ span.pixel-buff-slot{background:#1b2a22;border:1px solid #4e7a5c;border-radius:3
     while(seen<n){seen++;bump(seen===1?'play':'play2');}
   }catch(e){}},1000);
   try{window.addEventListener('pagehide',function(){try{clearInterval(timer);}catch(e){}});}catch(e){}
+}catch(e){}})();
+</script>
+<script>
+/* nyan-survivors web demo: toss link on the result screen (2026-11-28) */
+(function(){try{
+  var mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'')||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent||''));
+  if(!mobile)return;
+  var URL="https://toss.onelink.me/3563614660?pid=appsintoss&c=conversion_aepintoseu_performance&af_adset=share_link_20260912&af_ad=054038&is_retargeting=true&af_web_dp=https%3A%2F%2Ftoss.im&af_dp=supertoss%3A%2F%2Ftotal-services%3Fredirect%3Dintoss%253A%252F%252Fcatsurvivors%253Futm_source%253Dwebdemo&deep_link_value=supertoss%3A%2F%2Ftotal-services%3Fredirect%3Dintoss%253A%252F%252Fcatsurvivors%253Futm_source%253Dwebdemo&af_force_deeplink=true";
+  function special(){try{if(document.body&&document.body.classList.contains('pixel-special-on'))return true;if(typeof pixelGift==='function'&&pixelGift())return true;}catch(e){}return false;}
+  function add(){try{
+    var r=document.querySelector('#screen-overlay .pixel-result');
+    if(!r||r.querySelector('.webdemo-toss')||special())return;
+    var a=document.createElement('a');a.className='webdemo-toss';a.href=URL;a.rel='noopener';
+    a.setAttribute('style','display:flex;align-items:center;gap:10px;margin:14px auto 4px;max-width:320px;padding:11px 14px;border-radius:12px;border:1px solid #3a6f7a;background:#10262bcc;color:#e9f6f3;text-decoration:none;text-align:left;font-family:inherit;font-size:14px;line-height:1.35;word-break:keep-all;box-sizing:border-box');
+    a.innerHTML='<span style="font-size:22px">📱</span><span><b>토스 앱에서도 하기</b><br><small style="color:#9fc3c0">토스에도 「냥서바이버」가 있어요 · 토스에서는 처음부터 새로 시작해요</small></span>';
+    a.addEventListener('click',function(){try{if(window.__nyanBump)window.__nyanBump('toss');}catch(e){}});
+    var btn=r.querySelector('#pixel-retry');if(btn)btn.insertAdjacentElement('afterend',a);else r.appendChild(a);
+  }catch(e){}}
+  function boot(){var ov=document.getElementById('screen-overlay');if(!ov){setTimeout(boot,500);return;}
+    try{new MutationObserver(add).observe(ov,{childList:true});}catch(e){}add();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 }catch(e){}})();
 </script>
 </head>
@@ -6440,6 +6464,8 @@ function pixelWatchAd(where){
         const label=document.getElementById(id);
         if(label)label.textContent='🪙 '+pixelGoldText();
       }
+      // 11-27 출고검수-23 보완 2: 화면 맨 위 골드(`pixelTopBar` 의 .pixel-gold, id 없음)도 같이 고친다 — 안 고치면 위 0 · 요약 200 으로 갈린다.
+      for(const label of document.querySelectorAll('.pixel-top .pixel-gold'))label.textContent='🪙 '+pixelGoldText();
       // 골드가 늘었으니 '무엇을 살 수 있는가'도 다시 쓴다. 광고 직후가 상점으로 가장 밀기 좋은 순간이다
       // (`shop_open` 2 ÷ `app_open` 74 = 2.7%). 안 고치면 200을 받고도 "광고 1번이면…"이라고 말한다.
       const hint=document.getElementById('pixel-ad-hint');
@@ -6609,6 +6635,7 @@ async function pixelShare(){
 //
 // ⛔ 노출 여부로 보상·다음 단계를 바꾸지 않는다(토스 명시 금지) — 보상 지급·저장이 **끝난 뒤**에 쏜다.
 const PIXEL_REVIEW_MAX=3;          // 평생 상한. Apple SKStoreReviewController 의 연 3회 상한을 본떴다.
+const PIXEL_REVIEW_MIN_GAMES=3;    // 스테이지를 못 깼어도 끝낸 판이 이만큼이면 「충분히 써 본」 사람으로 본다.
 function pixelReviewState(){const p=pixelProgress();if(!p.review||typeof p.review!=='object')p.review={n:0,day:''};return p.review;}
 function pixelReviewAvailable(){
   if(typeof window==='undefined'||typeof window.tossRequestReview!=='function')return false;
@@ -6622,7 +6649,8 @@ function pixelReviewOK(){
   try{if(typeof pixelGift==='function'&&pixelGift())return false;}catch{}
   try{if(typeof pixelSpecialActive==='function'&&pixelSpecialActive())return false;}catch{}
   if(!pixelReviewAvailable())return false;
-  if(pixelClearedStages().length<1)return false;    // Google: 충분히 써 본 뒤에만 묻는다
+  // Google: 충분히 써 본 뒤에만 묻는다. 스테이지 통과만 보면 14일 미션 수령 8번 중 2번만 물었다(11-22 콘솔) → 끝낸 판 3개도 인정.
+  if(pixelClearedStages().length<1&&(saveData.gamesPlayed|0)<PIXEL_REVIEW_MIN_GAMES)return false;
   const r=pixelReviewState();
   if((r.n|0)>=PIXEL_REVIEW_MAX)return false;
   if(r.day===getTodayStr())return false;            // 하루 1회
@@ -6736,7 +6764,10 @@ gameOver=async function(){
     if(stars.gained>0){starGold=stars.gained*PIXEL_STAR_GOLD;saveData.gold=pixelGold()+starGold;}
     scene=pixelChapterScene(run);      // 챕터를 마쳤다면 한 번만 나오는 장면
     await writeSave();
-    goldEarned=Math.max(0,pixelGold()-goldBefore);}
+    goldEarned=Math.max(0,pixelGold()-goldBefore);
+    // 2026-11-23 리뷰 요청 자리 추가: 14일 run_end 59인데 묻는 자리는 미션 수령(8)뿐이라 review_req 2였다.
+    // 목표를 달성한 판(토스 문서 「목표 달성 직후」)에만, 보상·저장이 끝난 뒤 묻는다. 상한 4겹은 pixelReviewOK 가 그대로 지킨다.
+    if(!run.special&&run.stageId&&pixelGoalMet(run)){try{const r=pixelAskReview('result');if(r&&r.catch)r.catch(()=>{});}catch{}}}
   pixelSettling=0;
   setHudVisible(false);gamePaused=false;
   const ov=document.getElementById('screen-overlay');ov.classList.add('pixel-menu');
@@ -6751,6 +6782,10 @@ gameOver=async function(){
   // 실패했을 때는 광고·강화를 화면 위쪽에 크게 모아 둔다. 통과했을 때는 기존처럼 아래에 조용히 둔다.
   const failed=!run.trial&&!run.special&&!(run.stageId&&pixelGoalMet(run));
   const cta=failed?pixelDeathCTA(run):'';
+  // 2026-11-21 (퍼널 보완 · 결정대장 296): 공유 입구가 로비 접힌 선 아래 하나뿐이라 14일 share_cta 16 → share_tap 0.
+  // 자랑할 것이 생긴 자리(스테이지 **첫 통과**)에 하나 더 둔다. 광고 버튼(61 ad_cta_result 측정 중) 자리를 밀지 않게 맨 아래.
+  const shareResult=(!run.trial&&!run.special&&newStage&&run.stageId&&pixelGoalMet(run)&&typeof pixelShareAvailable==='function'&&pixelShareAvailable())
+    ?`<button type="button" class="home-share" id="pixel-share-result" onclick="pixelShare('result')"><span class="share-ico">🎉</span><span><b>통과 기록 친구에게 공유하기</b><small>내 기록이 담긴 토스 링크를 보내요</small></span></button>`:'';
   const ad=(run.trial||run.special||failed||!pixelAdAvailable())?'':`<button class="pixel-secondary pixel-ad-btn" id="pixel-ad" type="button" onclick="pixelWatchAd()">📺 광고 보고 🪙 +${PIXEL_AD_GOLD} 받기</button>`;
   // 판이 끝나도 남는 것: 이번 판 골드와 스테이지 첫 통과 보너스. 체험·솜이 판은 적립이 없으므로 표시하지 않는다.
   const purse=(run.trial||run.special)?'':`<div class="result-purse"><span>이번 판 <b>🪙 +${goldEarned.toLocaleString()}</b>${stageBonus?` <i>(첫 통과 보너스 +${stageBonus})</i>`:''}${starGold?` <i>(새 별 +${starGold})</i>`:''}</span><span class="purse-total">가진 골드 <b id="pixel-result-gold">🪙 ${pixelGoldText()}</b></span></div>`;
@@ -6762,7 +6797,7 @@ gameOver=async function(){
   const staged=!run.trial&&!run.special&&!!run.stageId,met=staged&&pixelGoalMet(run);
   const eyebrow=run.trial?'기록 없는 체험':staged?(met?'스테이지 통과':victoryAchieved?'살아남았지만 목표는 놓쳤어요':'다시 도전해 볼까요?'):(victoryAchieved?'모험 성공':'다시 도전해 볼까요?');
   const headline=staged?(met?'모험 완료!':victoryAchieved?'거의 다 왔어요!':'다음엔 어떤 빌드로?'):(victoryAchieved?'모험 완료!':'다음엔 어떤 빌드로?');
-  ov.innerHTML=`<main class="pixel-result"><span class="eyebrow">${eyebrow}</span><h1>${headline}</h1><img class="result-cat" src="${pixelPortraits[player.catId]}" alt=""><h2>${pixelPathName()}</h2><p>${pixelSimple(run)?`스킬 ${pixelWeaponSpent()}단계`:`무기 ${pixelWeaponSpent()}/${PIXEL_WEAPON_POINTS}칸`} · ${Math.floor(sec/60)}분 ${sec%60}초 · ${kills}마리 처치</p><div class="result-primary-actions"><button class="pixel-primary" id="pixel-retry" type="button">${nextLabel}</button></div>${newCats.map(i=>`<div class="pixel-unlock earned"><strong>${CATS[i].name}가 함께하게 됐어요!</strong><small>새 고양이의 스킬을 키워 보세요.</small></div>`).join('')}${(run.newStages||[]).map(i=>`<div class="pixel-unlock earned"><strong>새 맵 「${pixelStageNames[i]}」이 열렸어요!</strong><small>고양이 고르기에서 맵을 바꿔 보세요.</small></div>`).join('')}${pixelSceneHTML(scene)}${goal}${cta}${purse}${goalLine}${missed}${pixelTreeHTML()}${typeof pixelGearResultHTML==='function'?pixelGearResultHTML(run):''}<div class="result-history">${run.history.map(h=>`<span>${pixelEscape(h.name)}</span>`).join('<b>›</b>')}</div>${ad}<button class="pixel-secondary" id="pixel-map-result" type="button">모험 지도</button><button class="pixel-secondary" id="pixel-shop-result" type="button">영구 강화 쓰러 가기</button><button class="pixel-secondary" id="pixel-home" type="button">메인으로</button><p class="pixel-help">${run.trial?'체험 기록은 해금·골드에 반영되지 않아요.':'다른 고양이를 만나 새 스킬도 키워 보세요.'}</p></main>`;
+  ov.innerHTML=`<main class="pixel-result"><span class="eyebrow">${eyebrow}</span><h1>${headline}</h1><img class="result-cat" src="${pixelPortraits[player.catId]}" alt=""><h2>${pixelPathName()}</h2><p>${pixelSimple(run)?`스킬 ${pixelWeaponSpent()}단계`:`무기 ${pixelWeaponSpent()}/${PIXEL_WEAPON_POINTS}칸`} · ${Math.floor(sec/60)}분 ${sec%60}초 · ${kills}마리 처치</p><div class="result-primary-actions"><button class="pixel-primary" id="pixel-retry" type="button">${nextLabel}</button></div>${newCats.map(i=>`<div class="pixel-unlock earned"><strong>${CATS[i].name}가 함께하게 됐어요!</strong><small>새 고양이의 스킬을 키워 보세요.</small></div>`).join('')}${(run.newStages||[]).map(i=>`<div class="pixel-unlock earned"><strong>새 맵 「${pixelStageNames[i]}」이 열렸어요!</strong><small>고양이 고르기에서 맵을 바꿔 보세요.</small></div>`).join('')}${pixelSceneHTML(scene)}${goal}${cta}${purse}${goalLine}${missed}${pixelTreeHTML()}${typeof pixelGearResultHTML==='function'?pixelGearResultHTML(run):''}<div class="result-history">${run.history.map(h=>`<span>${pixelEscape(h.name)}</span>`).join('<b>›</b>')}</div>${ad}<button class="pixel-secondary" id="pixel-map-result" type="button">모험 지도</button><button class="pixel-secondary" id="pixel-shop-result" type="button">영구 강화 쓰러 가기</button><button class="pixel-secondary" id="pixel-home" type="button">메인으로</button>${shareResult}<p class="pixel-help">${run.trial?'체험 기록은 해금·골드에 반영되지 않아요.':'다른 고양이를 만나 새 스킬도 키워 보세요.'}</p></main>`;
   ov.scrollTop=0;
   document.getElementById('pixel-retry').onclick=()=>{if(advanceTo)pixelSelectStage(advanceTo);ov.classList.remove('pixel-menu');startGame({trial:run.trial});};
   document.getElementById('pixel-home').onclick=showSelect;
@@ -8178,7 +8213,13 @@ function pixelTrack(name,extra={}){
   pixelTelemetry.recent.push({name,params});if(pixelTelemetry.recent.length>60)pixelTelemetry.recent.shift();
   if(!pixelTelemetry.send)return;
   try{const pending=pixelTelemetry.send(name,params);if(pending&&typeof pending.catch==='function')pending.catch(()=>{});}catch{}
+  // 2026-11-27 토스 프로모션(「미니앱 구경하고 5원 받기」) 손님만 따로 센다. 콘솔은 이름별 건수만 주므로
+  // 같은 사건을 `promo_` 이름으로 한 번 더 보낸다. 프로모션 화면 주소가 `intoss://catsurvivors/?src=promo` 다.
+  if(pixelTelemetry.src==='promo'&&!pixelTelemetry.tester&&PIXEL_PROMO_MIRROR.has(name)){
+    try{const p2=pixelTelemetry.send('promo_'+name,params);if(p2&&typeof p2.catch==='function')p2.catch(()=>{});}catch{}
+  }
 }
+const PIXEL_PROMO_MIRROR=new Set(['run_start','run_mark_30s','run_mark_60s','run_mark_120s','run_end','replay_start','ad_cta_prerun','ad_tap_prerun','shop_open']);
 function pixelRunParams(run){const t=run.telemetry;return {run:t.run,cat:t.cat,stage:t.stage,mode:t.mode};}
 // 2026-09-20: `stage`는 맵 번호(0~2)여서 1-1과 1-4를 구분할 수 없었다. 실제 스테이지 id('1-3')를 쓴다.
 // 체험·솜이 판에는 stageId가 없으므로 맵 번호를 문자열로 남긴다. **38까지의 데이터와 이어 붙이지 않는다.**
@@ -8201,7 +8242,7 @@ function pixelSaveTester(){
 // 네 곳을 미리 넣는다. 허용 목록에 없으면 글을 올려도 유입원을 영영 가를 수 없다(소급 불가).
 // 2026-10-05 교대 6: `share` 추가(장부 A17). 공유 링크는 `intoss://catsurvivors/?src=share` 로 나가므로
 // 이 목록에 없으면 "공유가 사람을 데려왔는가"를 영영 가를 수 없다(소급 불가 — 교대 4 결함과 같은 종류).
-const PIXEL_SRC_COUNTED=new Set(['dcindie','dcinside','reddit','blog','push','tossads','navercafe','ruliweb','arca','indieter','share']);
+const PIXEL_SRC_COUNTED=new Set(['dcindie','dcinside','reddit','blog','push','tossads','navercafe','ruliweb','arca','indieter','share','promo']);
 pixelTesterLoaded.then(()=>{
   pixelTrack('app_open');
   if(!pixelTelemetry.tester&&PIXEL_SRC_COUNTED.has(pixelTelemetry.src))pixelTrack('src_'+pixelTelemetry.src);
@@ -8262,6 +8303,30 @@ pixelRecordProgress=function(run,info){
   return ids;
 };
 
+// ── 결과 화면 광고 입구 도달 계측 (2026-11-20 밤 · 노력장부 6절 1순위) ─────────────
+// 광고 누름(`ad_tap_result`)은 있었는데 **결과 화면 입구가 보였는지**는 아무도 세지 않았다 —
+// 14일 `ad_tap_result` 0건이 「보고도 안 눌렀다」인지 「애초에 안 떴다」인지 가를 수 없었다.
+// 기준은 `ad_cta_prerun` 과 같은 **절반 이상 화면 안**. 결과 화면 한 번당 1회(판마다 다시 셈).
+//   death 1 = 죽은 판의 큰 입구(pixelDeathCTA) · 0 = 통과한 판의 작은 입구
+// 솜이·선물판은 입구를 그리지 않고 계측도 하지 않는다(pixelMetaMuted).
+let pixelAdResultSeen=true,pixelAdResultDeath=0;
+function pixelAdResultCheck(){
+  if(pixelAdResultSeen)return;
+  if(!pixelAdAvailable())return;   // 광고를 못 쓰면 입구를 그리지 않는다(interface.js 결과 화면 조건과 같다)
+  const btn=document.getElementById('pixel-ad');
+  if(!btn)return;
+  const r=btn.getBoundingClientRect();
+  if(!r.height)return;
+  const shown=Math.min(r.bottom,innerHeight)-Math.max(r.top,0);
+  if(shown<r.height/2)return;
+  pixelAdResultSeen=true;
+  pixelTrack('ad_cta_result',{death:pixelAdResultDeath,gold:pixelGold()});
+}
+try{
+  const ov=document.getElementById('screen-overlay');
+  if(ov)ov.addEventListener('scroll',()=>pixelAdResultCheck(),{passive:true});
+}catch{}
+
 const pixelTelemetryBaseGameOver=gameOver;
 gameOver=async function(){
   const run=pixelRun,t=run?.telemetry;
@@ -8269,6 +8334,14 @@ gameOver=async function(){
   const snapshot=eligible?{result:victoryAchieved?'clear':'death',gsec:Math.floor(gameTime/SIM_FPS),kills,bosses:bossKills}:null;
   await pixelTelemetryBaseGameOver.apply(this,arguments);
   pixelRunMarkStop();
+  if(eligible&&!pixelMetaMuted()){
+    // interface.js 결과 화면과 같은 판정식 — 실패한 판에만 큰 입구(pixelDeathCTA)를 그린다.
+    try{pixelAdResultDeath=(!run.trial&&!run.special&&!(run.stageId&&pixelGoalMet(run)))?1:0;}catch{pixelAdResultDeath=0;}
+    pixelAdResultSeen=false;try{pixelAdResultCheck();}catch{}
+    // 첫 통과 판에만 그려진다 — 이번 결과 화면에 실제로 들어 있을 때만 센다(그리지 않은 입구를 도달로 세지 않음).
+    try{const o=document.getElementById('screen-overlay');pixelShareResultSeen=!(o&&String(o.innerHTML).includes('id="pixel-share-result"'));}catch{pixelShareResultSeen=true;}
+    try{pixelShareResultCheck();}catch{}
+  }
   if(!eligible||t.ended)return;
   t.ended=true;t.result=snapshot.result;t.gsec=snapshot.gsec;
   pixelTrack('run_end',{...pixelRunParams(run),...snapshot,picks:t.picks,evolved:run.fusion?2:Object.values(run.talents).includes(3)?1:0,wall_sec:Math.round((pixelClock()-t.startedAt)/1000)});
@@ -8504,6 +8577,20 @@ function pixelShareCtaCheck(){
 }
 // 로비는 두 경로로 그려진다: showSelect(첫 진입·미션 화면 되돌아가기)와 pixelHome 직접 호출(상점 되돌아가기).
 // `share_cta` 는 세션 1회라 두 군데서 불러도 중복되지 않는다.
+// 결과 화면 공유 입구(2026-11-21 · 첫 통과 판만 그려짐) — 같은 「절반 이상 보임」 기준, 판마다 1회.
+let pixelShareResultSeen=true;
+function pixelShareResultCheck(){
+  if(pixelShareResultSeen)return;
+  if(typeof pixelShareAvailable!=='function'||!pixelShareAvailable())return;   // 그리지 않은 입구는 세지 않는다
+  const btn=document.getElementById('pixel-share-result');
+  if(!btn)return;
+  const r=btn.getBoundingClientRect();
+  if(!r.height)return;
+  const shown=Math.min(r.bottom,innerHeight)-Math.max(r.top,0);
+  if(shown<r.height/2)return;
+  pixelShareResultSeen=true;pixelTrack('share_cta_result');
+}
+try{const ov=document.getElementById('screen-overlay');if(ov)ov.addEventListener('scroll',()=>pixelShareResultCheck(),{passive:true});}catch{}
 const pixelTelemetryBaseSelectShare=showSelect;
 showSelect=function(){
   const result=pixelTelemetryBaseSelectShare.apply(this,arguments);
@@ -8524,7 +8611,8 @@ try{
 const pixelTelemetryBaseShare=pixelShare;
 pixelShare=async function(){
   const open=pixelShareAvailable();
-  if(open&&!pixelMetaMuted())pixelTrack('share_tap',{cleared:pixelClearedStages().length});
+  const where=arguments[0]==='result'?'result':'lobby';
+  if(open&&!pixelMetaMuted())pixelTrack(where==='result'?'share_tap_result':'share_tap',{cleared:pixelClearedStages().length});
   const ok=await pixelTelemetryBaseShare.apply(this,arguments);
   if(ok===true&&!pixelMetaMuted())pixelTrack('share_done');
   return ok;
